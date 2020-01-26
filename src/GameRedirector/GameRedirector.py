@@ -1,3 +1,4 @@
+from PyQt5.QtCore import qCritical, qDebug
 import os
 
 class GameRedirector(mobase.IPluginFileMapper):
@@ -42,19 +43,28 @@ class GameRedirector(mobase.IPluginFileMapper):
     return self.__tr("Redirects game files between different games")
 
   def version(self):
-    return mobase.VersionInfo(2, 0, 0, 0)
+    return mobase.VersionInfo(2, 0, 1, 0)
 
   def isActive(self):
-    return ( self.__organizer.pluginSetting(self.name(), "enabled") and 
-             self.__organizer.managedGame().gameShortName() in self._supportedGames() )
+    return self.__organizer.pluginSetting(self.name(), "enabled") and self._gameIsSupported()
 
   def settings(self):
     return [
-      mobase.PluginSetting("enabled", self.__tr("Enable plugin"), True)
+      mobase.PluginSetting("enabled", self.__tr("Enable plugin"), True),
+      mobase.PluginSetting("enable_enderal", self.__tr("Enable Skyrim->Enderal redirection"), True),
+      mobase.PluginSetting("enable_skyrimSE", self.__tr("Enable Skyrim->SkyrimSE redirection"), True),
+      mobase.PluginSetting("enable_skyrimVR", self.__tr("Enable SkyrimSE->SkyrimVR redirection"), True),
       ]
 
-  def _supportedGames(self):
-    return ["Enderal", "SkyrimVR", "SkyrimSE"]
+  def _gameIsSupported(self):
+    game = self.__organizer.managedGame().gameShortName()
+    if (game == "Enderal" and self.__organizer.pluginSetting(self.name(), "enable_enderal")):
+      return True
+    if (game == "SkyrimSE" and self.__organizer.pluginSetting(self.name(), "enable_skyrimSE")):
+      return True
+    if (game == "SkyrimVR" and self.__organizer.pluginSetting(self.name(), "enable_skyrimVR")):
+      return True
+    return False
 
   #==============================================================
   # IPluginFileMapper interfaces
@@ -67,8 +77,10 @@ class GameRedirector(mobase.IPluginFileMapper):
     '''
     if not self.__organizer.pluginSetting(self.name(), "enabled"):
       return []
+    if not self._gameIsSupported():
+      return []
     
-    game = self.__organizer.managedGame.gameShortName()
+    game = self.__organizer.managedGame().gameShortName()
     if (game == "Enderal"):
       result = self._Enderal()
     elif (game == "SkyrimVR"):
@@ -87,126 +99,58 @@ class GameRedirector(mobase.IPluginFileMapper):
     obj.isDirectory = isDirectory
     obj.createTarget = createTarget
     return obj
+
+  def _redirectGame(self, gameSrcName, gameDstName, iniRedirects):
+    qDebug("Setting up {}->{} redirects".format(gameSrcName, gameDstName))
+    result = []
+
+    gameSrc = self.__organizer.getGame(gameSrcName)
+    gameDst = self.__organizer.getGame(gameDstName)
+    profile = self.__organizer.profile()
+    profilePath = self.__organizer.profilePath()
+
+    # Redirect AppData files
+    for profileFile in ("plugins.txt", "loadorder.txt"):
+      result.append(
+        self._createMapping(
+          source=os.path.join(profilePath, profileFile),
+          destination=os.path.expandvars(
+            os.path.join("%LOCALAPPDATA%", gameSrc.gameName(), profileFile)
+            )
+          )
+        )
+
+    # Redirect My Games files
+    for src, dst in iniRedirects:
+      if profile.localSettingsEnabled():
+        result.append(
+          self._createMapping(
+            source=os.path.join(profilePath, dst),
+            destination=os.path.join(gameSrc.documentsDirectory().absoluteFilePath(src))
+            )
+          )
+      else:
+        result.append(
+          self._createMapping(
+            source=os.path.join(gameDst.documentsDirectory().absoluteFilePath(dst)),
+            destination=os.path.join(gameSrc.documentsDirectory().absoluteFilePath(src))
+            )
+          )
+      
+    return result 
     
   def _Enderal(self):
-    result = []
-
-    gameSkyrim = self.__organizer.getGame("Skyrim")
-    gameEnderal = self.__organizer.getGame("Enderal")
-    profile = self.__organizer.profile()
-    profilePath = self.__organizer.profilePath()
-
-    # Redirect AppData files
-    for profileFile in ("plugins.txt", "loadorder.txt"):
-      result.append(
-        self._createMapping(
-          source=os.path.join(profilePath, profileFile),
-          destination=os.path.expandvars(
-            os.path.join("%LOCALAPPDATA%", gameSkyrim.gameShortName(), profileFile)
-            )
-          )
-        )
-
-    #Redirect My Games files
-    for src, dst in (("skyrim.ini", "enderal.ini"),
-                     ("skyrimprefs.ini", "enderalprefs.ini")):
-      if profile.localSettingsEnabled():
-        result.append(
-          self._createMapping(
-            source=os.path.join(profilePath, dst),
-            destination=os.path.join(gameSkyrim.documentsDirectory().absoluteFilePath(src))
-            )
-          )
-      else:
-        result.append(
-          self._createMapping(
-            source=os.path.join(gameEnderal.documentsDirectory().absoluteFilePath(dst)),
-            destination=os.path.join(gameSkyrim.documentsDirectory().absoluteFilePath(src))
-            )
-          )
-
-    return result
+    return self._redirectGame("Skyrim", "Enderal", (("skyrim.ini",      "enderal.ini"     ),
+                                                    ("skyrimprefs.ini", "enderalprefs.ini")))
 
   def _SkyrimVR(self):
-    result = []
-
-    gameSkyrimVR = self.__organizer.getGame("SkyrimVR")
-    gameSkyrimSE = self.__organizer.getGame("SkyrimSE")
-    profile = self.__organizer.profile()
-    profilePath = self.__organizer.profilePath()
-
-    # Redirect AppData files
-    for profileFile in ("plugins.txt", "loadorder.txt"):
-      result.append(
-        self._createMapping(
-          source=os.path.join(profilePath, profileFile),
-          destination=os.path.expandvars(
-            os.path.join("%LOCALAPPDATA%", gameSkyrimVR.gameShortName(), profileFile)
-            )
-          )
-        )
-
-    #Redirect My Games files
-    for src, dst in (("skyrim.ini", "skyrim.ini"),
-                     ("skyrimprefs.ini", "skyrimprefs.ini"),
-                     ("skyrimcustom.ini", "skyrimcustom.ini")):
-      if profile.localSettingsEnabled():
-        result.append(
-          self._createMapping(
-            source=os.path.join(profilePath, dst),
-            destination=os.path.join(gameSkyrimVR.documentsDirectory().absoluteFilePath(src))
-            )
-          )
-      else:
-        result.append(
-          self._createMapping(
-            source=os.path.join(gameSkyrimSE.documentsDirectory().absoluteFilePath(dst)),
-            destination=os.path.join(gameSkyrimVR.documentsDirectory().absoluteFilePath(src))
-            )
-          )
-
-    return result
+    return self._redirectGame("SkyrimSE", "SkyrimVR", (("skyrim.ini",       "skyrim.ini"      ),
+                                                       ("skyrimprefs.ini",  "skyrimprefs.ini" ),
+                                                       ("skyrimcustom.ini", "skyrimcustom.ini")))
 
   def _SkyrimSE(self):
-    result = []
-
-    gameSkyrimSE = self.__organizer.getGame("SkyrimSE")
-    gameSkyrim = self.__organizer.getGame("Skyrim")
-    profile = self.__organizer.profile()
-    profilePath = self.__organizer.profilePath()
-
-    # Redirect AppData files
-    for profileFile in ("plugins.txt", "loadorder.txt"):
-      result.append(
-        self._createMapping(
-          source=os.path.join(profilePath, profileFile),
-          destination=os.path.expandvars(
-            os.path.join("%LOCALAPPDATA%", gameSkyrimSE.gameShortName(), profileFile)
-            )
-          )
-        )
-
-    #Redirect My Games files
-    for src, dst in (("skyrim.ini", "skyrim.ini"),
-                     ("skyrimprefs.ini", "skyrimprefs.ini"),
-                     ("skyrimcustom.ini", "skyrimcustom.ini")):
-      if profile.localSettingsEnabled():
-        result.append(
-          self._createMapping(
-            source=os.path.join(profilePath, dst),
-            destination=os.path.join(gameSkyrimSE.documentsDirectory().absoluteFilePath(src))
-            )
-          )
-      else:
-        result.append(
-          self._createMapping(
-            source=os.path.join(gameSkyrim.documentsDirectory().absoluteFilePath(dst)),
-            destination=os.path.join(gameSkyrimSE.documentsDirectory().absoluteFilePath(src))
-            )
-          )
-
-    return result
-
+    return self._redirectGame("Skyrim", "SkyrimSE", (("skyrim.ini",       "skyrim.ini"      ),
+                                                     ("skyrimprefs.ini",  "skyrimprefs.ini" )))
 
 
 def createPlugin():
