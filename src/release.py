@@ -11,6 +11,6 @@ files_to_pack = (
     ("GameRedirector/GameRedirector.py",    "plugins/GameRedirector.py"),
 )
 
-with ZipFile('../release.zip', 'w', ZIP_LZMA) as zip:
+with ZipFile('../LostDragonist-MO2-Plugins.zip', 'w', ZIP_LZMA) as zip:
     for file_, path in files_to_pack:
         zip.write(file_, path)
