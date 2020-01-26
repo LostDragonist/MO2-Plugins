@@ -35,7 +35,7 @@ The currently redirected files are:
 ## **Installation**
 Extract the archive to your MO2 install directory.
 
-## *Note: Updating MO2 with the automated updated/installer will result in these plugins being deleted!  You'll have to reinstall them after updating.*
+*Note: Updating MO2 with the automated updated/installer will result in these plugins being deleted!  You'll have to reinstall them after updating.*
 
 ## Releasing
 
