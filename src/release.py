@@ -6,8 +6,9 @@ Zip file is packed such that it can be extracted to the MO2 directory to install
 from zipfile import ZipFile, ZIP_LZMA
 
 files_to_pack = (
-    # File to pack                         Path to extract to
-    ("FixGameRegKey/FixGameRegKey.py", "plugins/FixGameRegKey.py"),
+    # File to pack                          Path to extract to
+    ("FixGameRegKey/FixGameRegKey.py",      "plugins/FixGameRegKey.py"),
+    ("GameRedirector/GameRedirector.py",    "plugins/GameRedirector.py"),
 )
 
 with ZipFile('../release.zip', 'w', ZIP_LZMA) as zip:
