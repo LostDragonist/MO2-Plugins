@@ -5,12 +5,22 @@ Zip file is packed such that it can be extracted to the MO2 directory to install
 
 from zipfile import ZipFile, ZIP_LZMA
 
-files_to_pack = (
-    # File to pack                          Path to extract to
-    ("FixGameRegKey/FixGameRegKey.py",      "plugins/FixGameRegKey.py"),
-    ("GameRedirector/GameRedirector.py",    "plugins/GameRedirector.py"),
-)
+files_to_pack = {
+    # Archive
+    "../LostDragonist-MO2-Plugins.zip" : (
+        # File to pack                          Path to extract to
+        ("FixGameRegKey/FixGameRegKey.py",      "plugins/FixGameRegKey.py"),
+        ("GameRedirector/GameRedirector.py",    "plugins/GameRedirector.py"),
+    ),
 
-with ZipFile('../LostDragonist-MO2-Plugins.zip', 'w', ZIP_LZMA) as zip:
-    for file_, path in files_to_pack:
-        zip.write(file_, path)
+    # Archive
+    "../LootPreventifier.zip" : (
+        # File to pack                           Path to extract to
+        ("LootPreventifier/LootPreventifier.py", "plugins/LootPreventifier.py"),
+    ),
+}
+
+for key in files_to_pack:
+    with ZipFile(key, 'w', ZIP_LZMA) as zip:
+        for file_, path in files_to_pack[key]:        
+            zip.write(file_, path)
