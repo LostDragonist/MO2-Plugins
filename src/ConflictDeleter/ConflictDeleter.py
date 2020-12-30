@@ -110,7 +110,6 @@ class ConflictDeleter(mobase.IPluginTool):
                     continue
 
                 origins = self._organizer.getFileOrigins(file_)
-                qDebug("file {} origins {}".format(file_, origins))
                 if len(origins) > 1:
                     for origin in origins[1:]:
                         if origin not in files_to_delete:
