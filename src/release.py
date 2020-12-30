@@ -3,7 +3,7 @@ Packs all the plugins up into a zip file to upload elsewhere.
 Zip file is packed such that it can be extracted to the MO2 directory to install everything.
 '''
 
-from zipfile import ZipFile, ZIP_LZMA
+from zipfile import ZipFile, ZIP_DEFLATED
 
 files_to_pack = {
     # Archive
@@ -22,6 +22,6 @@ files_to_pack = {
 }
 
 for key in files_to_pack:
-    with ZipFile(key, 'w', ZIP_LZMA) as zip:
+    with ZipFile(key, 'w', ZIP_DEFLATED) as zip:
         for file_, path in files_to_pack[key]:
             zip.write(file_, path)
