@@ -34,7 +34,7 @@ class ConflictDeleter(mobase.IPluginTool):
         return self.__tr("Removes files that are overwritten by other mods")
 
     def version(self):
-        return mobase.VersionInfo(0, 1, 0, 0)
+        return mobase.VersionInfo(0, 2, 0, 0)
 
     def isActive(self):
         if not self._organizer.pluginSetting(self.name(), "enabled"):
@@ -96,10 +96,6 @@ class ConflictDeleter(mobase.IPluginTool):
         dirs_to_search = ['']
         self._listDirsRecursive(dirs_to_search)
 
-        # Debugging: List directories
-        #for dir_ in dirs_to_search:
-        #    qDebug("Found dir '{}'".format(dir_))
-
         for dir_ in dirs_to_search:
             for file_ in self._organizer.findFiles(path=dir_, filter=lambda x: True):
                 # This is a messed up way to discard the mods directory and mod name from the path
@@ -117,11 +113,6 @@ class ConflictDeleter(mobase.IPluginTool):
                         else:
                             files_to_delete[origin].append(file_)
 
-        # Debugging: List the files to delete
-        #for mod in files_to_delete:
-        #    for file_ in files_to_delete[mod]:
-        #        qDebug("Deleting '{}' from '{}'".format(file_, mod))
-
         # Create the backup mod
         backup_mod = self._organizer.createMod(mobase.GuessedString(value=backup_mod_name,
                                                                     quality=mobase.GuessQuality.PRESET))
@@ -130,7 +121,13 @@ class ConflictDeleter(mobase.IPluginTool):
         # Move files around
         for mod_name in files_to_delete:
             mod = self._organizer.getMod(mod_name)
-            mod_path  = mod.absolutePath()
+            if mod is None:
+                qDebug("Unable to get mod: {}".format(mod_name.encode('utf-8')))
+                continue
+            mod_path = mod.absolutePath()
+            if not mod_path.startswith(mods_directory):
+                # Probably DLC or unmanaged mod
+                continue
             for file_ in files_to_delete[mod_name]:
                 src_path = os.path.join(mod_path, file_)
                 if os.path.exists(src_path):
