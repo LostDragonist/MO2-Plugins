@@ -11,6 +11,7 @@ files_to_pack = {
         # File to pack                          Path to extract to
         ("FixGameRegKey/FixGameRegKey.py",      "plugins/FixGameRegKey.py"),
         ("GameRedirector/GameRedirector.py",    "plugins/GameRedirector.py"),
+        ("ConflictDeleter/ConflictDeleter.py",  "plugins/ConflictDeleter.py"),
     ),
 
     # Archive
@@ -22,5 +23,5 @@ files_to_pack = {
 
 for key in files_to_pack:
     with ZipFile(key, 'w', ZIP_LZMA) as zip:
-        for file_, path in files_to_pack[key]:        
+        for file_, path in files_to_pack[key]:
             zip.write(file_, path)
