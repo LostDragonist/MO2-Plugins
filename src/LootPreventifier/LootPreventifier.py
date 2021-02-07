@@ -29,7 +29,7 @@ class LootPreventifier(mobase.IPlugin):
         return self.__tr("Prevents the user from running LOOT")
 
     def version(self):
-        return mobase.VersionInfo(0, 0, 2, 0)
+        return mobase.VersionInfo(1, 0, 0, 0)
 
     def settings(self):
         return [

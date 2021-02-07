@@ -43,7 +43,7 @@ class GameRedirector(mobase.IPluginFileMapper):
     return self.__tr("Redirects game files between different games")
 
   def version(self):
-    return mobase.VersionInfo(2, 0, 1, 0)
+    return mobase.VersionInfo(3, 0, 0, 0)
 
   def settings(self):
     return [

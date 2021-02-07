@@ -50,7 +50,7 @@ class FixGameRegKey(mobase.IPluginTool):
         return self.__tr("Checks the game's installation path registry key and fixes as needed")
 
     def version(self):
-        return mobase.VersionInfo(0, 5, 0, 0)
+        return mobase.VersionInfo(1, 0, 0, 0)
 
 
 

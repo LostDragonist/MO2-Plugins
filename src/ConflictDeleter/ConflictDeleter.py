@@ -34,7 +34,7 @@ class ConflictDeleter(mobase.IPluginTool):
         return self.__tr("Removes files that are overwritten by other mods")
 
     def version(self):
-        return mobase.VersionInfo(0, 2, 0, 0)
+        return mobase.VersionInfo(1, 0, 0, 0)
 
     def settings(self):
         return []
