@@ -24,7 +24,7 @@ class FixGameRegKey(mobase.IPluginTool):
         }
 
     def __init__(self):
-        super(FixGameRegKey, self).__init__()
+        super().__init__()
         self._organizer = None
         self._parent = None
         self._powershellFound = shutil.which('powershell') is not None
@@ -51,21 +51,11 @@ class FixGameRegKey(mobase.IPluginTool):
 
     def version(self):
         return mobase.VersionInfo(0, 5, 0, 0)
-    
-    def isActive(self):
-        if not self._organizer.pluginSetting(self.name(), "enabled"):
-            active = False
-        elif self._getGameRegistryInfo() is None:
-            active = False
-        elif not self._powershellFound:
-            active = False
-        else:
-            active = True
-        return active
+
+
 
     def settings(self):
         return [
-            mobase.PluginSetting("enabled", self.__tr("Enables the plugin"), True),
             mobase.PluginSetting("silent", self.__tr("Fix the registry automatically"), False),
             ]
 
@@ -83,11 +73,20 @@ class FixGameRegKey(mobase.IPluginTool):
         self._parent = widget
 
     def display(self):
-        if self.isActive():
+        if self._isActive():
            self._checkInstallPath()
 
+    def _isActive(self):
+        if self._getGameRegistryInfo() is None:
+            active = False
+        elif not self._powershellFound:
+            active = False
+        else:
+            active = True
+        return active
+
     def _checkInstallPath(self):
-        if not self.isActive():
+        if not self._isActive():
             return True
 
         gameDirectory = self._organizer.managedGame().gameDirectory().canonicalPath()
@@ -97,7 +96,7 @@ class FixGameRegKey(mobase.IPluginTool):
                 gameDirectory = self.__tr('<invalid path>')
             if (installPath == ''):
                 installPath = self.__tr('<invalid path>')
-            answer = QMessageBox.question(self._parent, 
+            answer = QMessageBox.question(self._parent,
                                           self.__tr("Registry key does not match"),
                                           self.__tr("The game's installation path in the registry does not match the managed game path in MO.\n\n"
                                           "Registry Game Path:\n\t{}\n"
@@ -133,7 +132,7 @@ class FixGameRegKey(mobase.IPluginTool):
         if (key != winreg.HKEY_LOCAL_MACHINE):
             qCritical("Only HKLM is supported!")
             return
-        
+
         # Use powershell to write to the registry as admin
         args = '\'add "{}\\{}" /v "{}" /d "{}" /f /reg:32\''.format("HKLM", subKey, valueName, gameDirectory.replace("'", "''"))
         cmd = ['powershell', 'Start-Process', '-Verb', 'runAs', 'reg', '-ArgumentList', args]

@@ -6,7 +6,7 @@ import shutil
 import os
 
 #install_directory = os.path.join("C:/", "git", "modorganizer-umbrella", "install", "bin")
-install_directory = os.path.join("C:/", "Modding", "Tools", "Mod Organizer 2.2.2.1")
+install_directory = os.path.join("C:/", "Modding", "Tools", "Mod Organizer 2.4.0 RC1")
 
 for key in files_to_pack:
     for file_, path in files_to_pack[key]:

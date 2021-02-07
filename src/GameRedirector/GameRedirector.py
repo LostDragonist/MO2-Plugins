@@ -19,7 +19,7 @@ class GameRedirector(mobase.IPluginFileMapper):
     My Games/Skyrim/skyrimprefs.ini   => MO2_Profile/enderalprefs.ini
   '''
   def __init__(self):
-    super(GameRedirector, self).__init__()
+    super().__init__()
     self.__organizer = None
 
   def __tr(self, str_):
@@ -45,26 +45,12 @@ class GameRedirector(mobase.IPluginFileMapper):
   def version(self):
     return mobase.VersionInfo(2, 0, 1, 0)
 
-  def isActive(self):
-    return self.__organizer.pluginSetting(self.name(), "enabled") and self._gameIsSupported()
-
   def settings(self):
     return [
-      mobase.PluginSetting("enabled", self.__tr("Enable plugin"), True),
       mobase.PluginSetting("enable_enderal", self.__tr("Enable Skyrim->Enderal redirection"), True),
       mobase.PluginSetting("enable_skyrimSE", self.__tr("Enable Skyrim->SkyrimSE redirection"), True),
       mobase.PluginSetting("enable_skyrimVR", self.__tr("Enable SkyrimSE->SkyrimVR redirection"), True),
       ]
-
-  def _gameIsSupported(self):
-    game = self.__organizer.managedGame().gameShortName()
-    if (game == "Enderal" and self.__organizer.pluginSetting(self.name(), "enable_enderal")):
-      return True
-    if (game == "SkyrimSE" and self.__organizer.pluginSetting(self.name(), "enable_skyrimSE")):
-      return True
-    if (game == "SkyrimVR" and self.__organizer.pluginSetting(self.name(), "enable_skyrimVR")):
-      return True
-    return False
 
   #==============================================================
   # IPluginFileMapper interfaces
@@ -75,11 +61,9 @@ class GameRedirector(mobase.IPluginFileMapper):
     Returns:
       A list of Mapping objects.
     '''
-    if not self.__organizer.pluginSetting(self.name(), "enabled"):
-      return []
     if not self._gameIsSupported():
       return []
-    
+
     game = self.__organizer.managedGame().gameShortName()
     if (game == "Enderal"):
       result = self._Enderal()
@@ -136,9 +120,19 @@ class GameRedirector(mobase.IPluginFileMapper):
             destination=os.path.join(gameSrc.documentsDirectory().absoluteFilePath(src))
             )
           )
-      
-    return result 
-    
+
+    return result
+
+  def _gameIsSupported(self):
+    game = self.__organizer.managedGame().gameShortName()
+    if (game == "Enderal" and self.__organizer.pluginSetting(self.name(), "enable_enderal")):
+      return True
+    if (game == "SkyrimSE" and self.__organizer.pluginSetting(self.name(), "enable_skyrimSE")):
+      return True
+    if (game == "SkyrimVR" and self.__organizer.pluginSetting(self.name(), "enable_skyrimVR")):
+      return True
+    return False
+
   def _Enderal(self):
     return self._redirectGame("Skyrim", "Enderal", (("skyrim.ini",      "enderal.ini"     ),
                                                     ("skyrimprefs.ini", "enderalprefs.ini")))

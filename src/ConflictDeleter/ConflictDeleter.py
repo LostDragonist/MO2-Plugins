@@ -36,17 +36,8 @@ class ConflictDeleter(mobase.IPluginTool):
     def version(self):
         return mobase.VersionInfo(0, 2, 0, 0)
 
-    def isActive(self):
-        if not self._organizer.pluginSetting(self.name(), "enabled"):
-            active = False
-        else:
-            active = True
-        return active
-
     def settings(self):
-        return [
-            mobase.PluginSetting("enabled", self.__tr("Enables the plugin"), True),
-            ]
+        return []
 
     # IPluginTool
     def displayName(self):
@@ -62,13 +53,9 @@ class ConflictDeleter(mobase.IPluginTool):
         self._parent = widget
 
     def display(self):
-        if self.isActive():
-           self._deleteConflicts()
+        self._deleteConflicts()
 
     def _deleteConflicts(self):
-        if not self.isActive():
-            return True
-
         # Figure out a name for the mod that contains the "deleted" files
         backup_mod_name = time.strftime("ConflictDeleter_Backup_%Y_%m_%d_%H_%M_%S")
 
