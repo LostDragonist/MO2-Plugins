@@ -11,6 +11,9 @@ class MappingDumper(mobase.IPlugin):
         self._organizer = None
         self._parent = None
 
+    def enabledByDefault(self):
+        return False
+
     def __tr(self, str_):
         return QCoreApplication.translate(self.name(), str_)
 
@@ -52,7 +55,7 @@ class MappingDumper(mobase.IPlugin):
         """
         Version as seen in the plugin settings tab.
         """
-        return mobase.VersionInfo(0, 1, 0, 0)
+        return mobase.VersionInfo(1, 0, 0, 0)
 
     def settings(self):
         """
