@@ -9,6 +9,7 @@ files_to_pack = {
     # Archive
     "../LostDragonist-MO2-Plugins.zip" : (
         # File to pack                          Path to extract to
+        ("DumpMappings/DumpMappings.py",        "plugins/DumpMappings.py"),
         ("FixGameRegKey/FixGameRegKey.py",      "plugins/FixGameRegKey.py"),
         ("GameRedirector/GameRedirector.py",    "plugins/GameRedirector.py"),
         ("ConflictDeleter/ConflictDeleter.py",  "plugins/ConflictDeleter.py"),
