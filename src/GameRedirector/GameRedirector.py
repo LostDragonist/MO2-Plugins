@@ -43,7 +43,7 @@ class GameRedirector(mobase.IPluginFileMapper):
     return self.__tr("Redirects game files between different games")
 
   def version(self):
-    return mobase.VersionInfo(3, 0, 0, 0)
+    return mobase.VersionInfo(3, 1, 0, 0)
 
   def settings(self):
     return [
@@ -138,9 +138,9 @@ class GameRedirector(mobase.IPluginFileMapper):
                                                     ("skyrimprefs.ini", "enderalprefs.ini")))
 
   def _SkyrimVR(self):
-    return self._redirectGame("SkyrimSE", "SkyrimVR", (("skyrim.ini",       "skyrim.ini"      ),
-                                                       ("skyrimprefs.ini",  "skyrimprefs.ini" ),
-                                                       ("skyrimcustom.ini", "skyrimcustom.ini")))
+    return self._redirectGame("SkyrimSE", "SkyrimVR", (("skyrim.ini",       "skyrimvr.ini"   ),
+                                                       ("skyrimprefs.ini",  "skyrimprefs.ini"),
+                                                       ("skyrimcustom.ini", "THIS_FILE_SHOULD_NOT_EXIST_48485923038483450.ini")))
 
   def _SkyrimSE(self):
     return self._redirectGame("Skyrim", "SkyrimSE", (("skyrim.ini",       "skyrim.ini"      ),
