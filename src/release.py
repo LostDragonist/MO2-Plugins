@@ -8,11 +8,12 @@ from zipfile import ZipFile, ZIP_DEFLATED
 files_to_pack = {
     # Archive
     "../LostDragonist-MO2-Plugins.zip" : (
-        # File to pack                          Path to extract to
-        ("DumpMappings/DumpMappings.py",        "plugins/DumpMappings.py"),
-        ("FixGameRegKey/FixGameRegKey.py",      "plugins/FixGameRegKey.py"),
-        ("GameRedirector/GameRedirector.py",    "plugins/GameRedirector.py"),
-        ("ConflictDeleter/ConflictDeleter.py",  "plugins/ConflictDeleter.py"),
+        # File to pack                             Path to extract to
+        ("ConflictDeleter/ConflictDeleter.py",     "plugins/ConflictDeleter.py"),
+        ("DumpMappings/DumpMappings.py",           "plugins/DumpMappings.py"),
+        ("FixGameRegKey/FixGameRegKey.py",         "plugins/FixGameRegKey.py"),
+        ("GameRedirector/GameRedirector.py",       "plugins/GameRedirector.py"),
+        ("RequiemRedirector/RequiemRedirector.py", "plugins/RequiemRedirector.py"),
     ),
 
     # Archive
