@@ -47,10 +47,13 @@ class GameRedirector(mobase.IPluginFileMapper):
 
   def settings(self):
     return [
-      mobase.PluginSetting("enable_enderal", self.__tr("Enable Skyrim->Enderal redirection"), True),
-      mobase.PluginSetting("enable_skyrimSE", self.__tr("Enable Skyrim->SkyrimSE redirection"), True),
-      mobase.PluginSetting("enable_skyrimVR", self.__tr("Enable SkyrimSE->SkyrimVR redirection"), True),
+      mobase.PluginSetting("enable_enderal", self.__tr("Enable Skyrim->Enderal redirection"), False),
+      mobase.PluginSetting("enable_skyrimSE", self.__tr("Enable Skyrim->SkyrimSE redirection"), False),
+      mobase.PluginSetting("enable_skyrimVR", self.__tr("Enable SkyrimSE->SkyrimVR redirection"), False),
       ]
+
+  def enabledByDefault(self):
+    return False
 
   #==============================================================
   # IPluginFileMapper interfaces
