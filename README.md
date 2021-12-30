@@ -48,7 +48,7 @@ This plugins prevents the user from running "LOOT.exe" or "lootcli.exe" executab
 
 ## **RequiemRedirector** (RequiemRedirector.py, LostDragonist-MO2-Plugins.zip)
 
-Disabled by default. This plugin redirects some files to help assist with install Requiem in games other than Skyrim.
+Disabled by default. This plugin redirects some files to help assist with install Requiem in games other than Skyrim. This is only useful for Requiem 4.0.x. Requiem 5.0.0+ does not need any file shenanigans.
 
 The currently redirected files are:
 
