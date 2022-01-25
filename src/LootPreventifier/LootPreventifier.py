@@ -35,7 +35,13 @@ class LootPreventifier(mobase.IPlugin):
         return [
             mobase.PluginSetting("dialog", self.__tr("String displayed when LOOT is ran"),
                                  "This load order was created by hand and is carefully curated. "
-                                 "Running LOOT is disabled.")
+                                 "Running LOOT is disabled."
+                                 ""
+                                 "You can disable this plugin by:"
+                                 " 1. Opening Settings."
+                                 " 2. Going to the plugins tab."
+                                 " 3. Selecting the LOOT Preventifier plugin."
+                                 " 4. Unchecking the enabled box on the right.")
             ]
 
     def _preventLoot(self, appName):
